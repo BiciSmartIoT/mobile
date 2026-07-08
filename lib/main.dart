@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'config/app_routes.dart';
 import 'screens/add_vehicle_screen.dart';
+import 'screens/iot_control_screen.dart';
 import 'screens/my_vehicles_screen.dart';
 import 'screens/notifications_screen.dart';
 import 'screens/payment_methods_screen.dart';
@@ -44,6 +45,7 @@ class BiceSmartIoTApp extends StatelessWidget {
         AppRoutes.profile: (_) => const ProviderProfileScreen(),
         AppRoutes.vehicles: (_) => const MyVehiclesScreen(),
         AppRoutes.addVehicle: (_) => const AddVehicleScreen(),
+        AppRoutes.iotControl: (_) => const IotControlScreen(),
         AppRoutes.payments: (_) => const PaymentMethodsScreen(),
         AppRoutes.income: (_) => const ProviderIncomeScreen(),
         AppRoutes.notifications: (_) => const NotificationsScreen(),

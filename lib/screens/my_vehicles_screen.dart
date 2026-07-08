@@ -19,17 +19,17 @@ class _MyVehiclesScreenState extends State<MyVehiclesScreen> {
   @override
   void initState() {
     super.initState();
-    _future = ApiClient.instance.vehicles();
+    _future = ApiClient.instance.ownVehicles();
   }
 
   void _refresh() {
-    setState(() => _future = ApiClient.instance.vehicles());
+    setState(() => _future = ApiClient.instance.ownVehicles());
   }
 
   @override
   Widget build(BuildContext context) {
     return AppShell(
-      title: 'Vehiculos disponibles',
+      title: 'Mis vehiculos',
       actions: [
         IconButton(
           icon: const Icon(Icons.add_circle_outline, color: AppColors.white),
@@ -139,6 +139,20 @@ class _VehicleCard extends StatelessWidget {
           Text(
             'Ubicacion: ${vehicle.latitude.toStringAsFixed(4)}, ${vehicle.longitude.toStringAsFixed(4)}',
             style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'ESP32: ${vehicle.deviceId?.isNotEmpty == true ? vehicle.deviceId : 'sin asignar'}',
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
+          ),
+          const SizedBox(height: 14),
+          AppButton(
+            label: 'Control IoT en vivo',
+            onPressed: () => Navigator.pushNamed(
+              context,
+              AppRoutes.iotControl,
+              arguments: vehicle,
+            ),
           ),
         ],
       ),

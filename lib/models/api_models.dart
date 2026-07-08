@@ -127,6 +127,7 @@ class VehicleResource {
     required this.hourlyPrice,
     required this.latitude,
     required this.longitude,
+    required this.deviceId,
     required this.ratingAvg,
   });
 
@@ -138,6 +139,7 @@ class VehicleResource {
   final double hourlyPrice;
   final double latitude;
   final double longitude;
+  final String? deviceId;
   final double ratingAvg;
 
   factory VehicleResource.fromJson(Map<String, dynamic> json) {
@@ -150,6 +152,7 @@ class VehicleResource {
       hourlyPrice: _asDouble(json['hourlyPrice']),
       latitude: _asDouble(json['latitude']),
       longitude: _asDouble(json['longitude']),
+      deviceId: json['deviceId']?.toString(),
       ratingAvg: _asDouble(json['ratingAvg']),
     );
   }
@@ -230,6 +233,104 @@ class ProviderResource {
   }
 }
 
+class IotDeviceConfigResource {
+  const IotDeviceConfigResource({
+    required this.deviceId,
+    required this.speedLimitKmph,
+    required this.geofenceCenterLat,
+    required this.geofenceCenterLon,
+    required this.geofenceRadiusMeters,
+    this.updatedAt,
+  });
+
+  final String deviceId;
+  final double speedLimitKmph;
+  final double geofenceCenterLat;
+  final double geofenceCenterLon;
+  final double geofenceRadiusMeters;
+  final DateTime? updatedAt;
+
+  factory IotDeviceConfigResource.fromJson(Map<String, dynamic> json) {
+    return IotDeviceConfigResource(
+      deviceId: json['deviceId']?.toString() ?? '',
+      speedLimitKmph: _asDouble(json['speedLimitKmph']),
+      geofenceCenterLat: _asDouble(json['geofenceCenterLat']),
+      geofenceCenterLon: _asDouble(json['geofenceCenterLon']),
+      geofenceRadiusMeters: _asDouble(json['geofenceRadiusMeters']),
+      updatedAt: _nullableDateTime(json['updatedAt']),
+    );
+  }
+}
+
+class IotDeviceStateResource {
+  const IotDeviceStateResource({
+    required this.deviceId,
+    required this.eventType,
+    required this.blocked,
+    required this.message,
+    this.latitude,
+    this.longitude,
+    this.speedKmph,
+    this.insideGeofence,
+    this.lockState,
+    this.updatedAt,
+  });
+
+  final String deviceId;
+  final String eventType;
+  final bool blocked;
+  final String message;
+  final double? latitude;
+  final double? longitude;
+  final double? speedKmph;
+  final bool? insideGeofence;
+  final String? lockState;
+  final DateTime? updatedAt;
+
+  factory IotDeviceStateResource.fromJson(Map<String, dynamic> json) {
+    return IotDeviceStateResource(
+      deviceId: json['deviceId']?.toString() ?? '',
+      eventType: json['eventType']?.toString() ?? 'UNKNOWN',
+      blocked: json['blocked'] == true,
+      message: json['message']?.toString() ?? '',
+      latitude: _nullableDouble(json['latitude']),
+      longitude: _nullableDouble(json['longitude']),
+      speedKmph: _nullableDouble(json['speedKmph']),
+      insideGeofence: json['insideGeofence'] is bool
+          ? json['insideGeofence'] as bool
+          : null,
+      lockState: json['lockState']?.toString(),
+      updatedAt: _nullableDateTime(json['updatedAt']),
+    );
+  }
+}
+
+class IotDeviceCommandResource {
+  const IotDeviceCommandResource({
+    required this.commandId,
+    required this.deviceId,
+    required this.type,
+    required this.reason,
+    required this.status,
+  });
+
+  final String commandId;
+  final String deviceId;
+  final String type;
+  final String reason;
+  final String status;
+
+  factory IotDeviceCommandResource.fromJson(Map<String, dynamic> json) {
+    return IotDeviceCommandResource(
+      commandId: json['commandId']?.toString() ?? '',
+      deviceId: json['deviceId']?.toString() ?? '',
+      type: json['type']?.toString() ?? 'UNKNOWN',
+      reason: json['reason']?.toString() ?? '',
+      status: json['status']?.toString() ?? 'UNKNOWN',
+    );
+  }
+}
+
 int _asInt(Object? value) {
   if (value is int) return value;
   if (value is num) return value.toInt();
@@ -240,4 +341,16 @@ double _asDouble(Object? value) {
   if (value is double) return value;
   if (value is num) return value.toDouble();
   return double.tryParse(value?.toString() ?? '') ?? 0;
+}
+
+double? _nullableDouble(Object? value) {
+  if (value == null) return null;
+  if (value is double) return value;
+  if (value is num) return value.toDouble();
+  return double.tryParse(value.toString());
+}
+
+DateTime? _nullableDateTime(Object? value) {
+  if (value == null) return null;
+  return DateTime.tryParse(value.toString());
 }

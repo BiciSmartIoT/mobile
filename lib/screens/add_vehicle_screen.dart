@@ -18,6 +18,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   final _priceController = TextEditingController(text: '10');
   final _latController = TextEditingController(text: '-12.0464');
   final _lngController = TextEditingController(text: '-77.0428');
+  final _deviceIdController = TextEditingController(text: 'esp32-demo-01');
   bool _loading = false;
 
   @override
@@ -27,6 +28,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     _priceController.dispose();
     _latController.dispose();
     _lngController.dispose();
+    _deviceIdController.dispose();
     super.dispose();
   }
 
@@ -54,6 +56,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         hourlyPrice: price,
         latitude: lat,
         longitude: lng,
+        deviceId: _deviceIdController.text.trim(),
       );
       if (!mounted) return;
       showAppMessage(context, 'Vehiculo registrado correctamente.');
@@ -92,6 +95,11 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             label: 'Precio por hora',
             controller: _priceController,
             keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: 18),
+          AppTextField(
+            label: 'ESP32 device ID',
+            controller: _deviceIdController,
           ),
           const SizedBox(height: 18),
           Row(

@@ -124,6 +124,7 @@ class ApiClient {
     required double hourlyPrice,
     required double latitude,
     required double longitude,
+    String? deviceId,
   }) async {
     final decoded = await _request(
       'POST',
@@ -134,6 +135,34 @@ class ApiClient {
         'hourlyPrice': hourlyPrice,
         'latitude': latitude,
         'longitude': longitude,
+        if (deviceId != null && deviceId.trim().isNotEmpty)
+          'deviceId': deviceId.trim(),
+      },
+    ) as Map<String, dynamic>;
+    return VehicleResource.fromJson(decoded);
+  }
+
+  Future<VehicleResource> updateVehicle({
+    required String vehicleId,
+    String? title,
+    String? description,
+    double? hourlyPrice,
+    double? latitude,
+    double? longitude,
+    String? deviceId,
+    String? desiredStatus,
+  }) async {
+    final decoded = await _request(
+      'PATCH',
+      '/api/vehicles/$vehicleId',
+      body: {
+        if (title != null) 'title': title.trim(),
+        if (description != null) 'description': description.trim(),
+        if (hourlyPrice != null) 'hourlyPrice': hourlyPrice,
+        if (latitude != null) 'latitude': latitude,
+        if (longitude != null) 'longitude': longitude,
+        if (deviceId != null) 'deviceId': deviceId.trim(),
+        if (desiredStatus != null) 'desiredStatus': desiredStatus,
       },
     ) as Map<String, dynamic>;
     return VehicleResource.fromJson(decoded);
@@ -218,6 +247,61 @@ class ApiClient {
         .toList();
   }
 
+  Future<IotDeviceConfigResource> iotDeviceConfig(String deviceId) async {
+    final decoded = await _request(
+      'GET',
+      '/api/iot/devices/$deviceId/config',
+    ) as Map<String, dynamic>;
+    return IotDeviceConfigResource.fromJson(decoded);
+  }
+
+  Future<IotDeviceConfigResource> updateIotDeviceConfig({
+    required String deviceId,
+    required double speedLimitKmph,
+    required double geofenceCenterLat,
+    required double geofenceCenterLon,
+    required double geofenceRadiusMeters,
+  }) async {
+    final decoded = await _request(
+      'PUT',
+      '/api/iot/devices/$deviceId/config',
+      body: {
+        'speedLimitKmph': speedLimitKmph,
+        'geofenceCenterLat': geofenceCenterLat,
+        'geofenceCenterLon': geofenceCenterLon,
+        'geofenceRadiusMeters': geofenceRadiusMeters,
+      },
+    ) as Map<String, dynamic>;
+    return IotDeviceConfigResource.fromJson(decoded);
+  }
+
+  Future<IotDeviceStateResource?> iotDeviceState(String deviceId) async {
+    final decoded = await _request(
+      'GET',
+      '/api/iot/devices/$deviceId/state',
+    );
+    if (decoded == null) {
+      return null;
+    }
+    return IotDeviceStateResource.fromJson(decoded as Map<String, dynamic>);
+  }
+
+  Future<IotDeviceCommandResource> sendIotCommand({
+    required String deviceId,
+    required String type,
+    required String reason,
+  }) async {
+    final decoded = await _request(
+      'POST',
+      '/api/iot/devices/$deviceId/commands',
+      body: {
+        'type': type,
+        'reason': reason,
+      },
+    ) as Map<String, dynamic>;
+    return IotDeviceCommandResource.fromJson(decoded);
+  }
+
   Future<void> logout() async {
     _token = null;
     currentUser = null;
@@ -255,6 +339,9 @@ class ApiClient {
         'GET' => await _client.get(uri, headers: headers).timeout(_timeout),
         'POST' => await _client
             .post(uri, headers: headers, body: encodedBody)
+            .timeout(_timeout),
+        'PUT' => await _client
+            .put(uri, headers: headers, body: encodedBody)
             .timeout(_timeout),
         'PATCH' => await _client
             .patch(uri, headers: headers, body: encodedBody)
