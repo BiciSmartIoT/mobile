@@ -128,51 +128,72 @@ class AuthShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.black,
       body: SafeArea(
-        child: Row(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width * 0.10,
-              color: AppColors.limeGreen,
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(28),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 480),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 24),
-                      const BrandLogo(fontSize: 34, centered: true),
-                      const SizedBox(height: 24),
-                      Text(
-                        title,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final keyboardBottom = MediaQuery.viewInsetsOf(context).bottom;
+            return Row(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.10,
+                  color: AppColors.limeGreen,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    padding: EdgeInsets.fromLTRB(
+                      28,
+                      28,
+                      28,
+                      keyboardBottom > 0 ? keyboardBottom + 28 : 28,
+                    ),
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: 480,
+                          minHeight: constraints.maxHeight - 56,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SizedBox(height: 24),
+                            const BrandLogo(fontSize: 34, centered: true),
+                            const SizedBox(height: 24),
+                            Text(
+                              title,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: AppColors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              subtitle,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 28),
+                            child,
+                            const SizedBox(height: 24),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        subtitle,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-                      child,
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );
@@ -330,6 +351,9 @@ class AppTextField extends StatelessWidget {
     this.keyboardType,
     this.obscureText = false,
     this.maxLines = 1,
+    this.textInputAction,
+    this.autofillHints,
+    this.onSubmitted,
   });
 
   final String label;
@@ -337,6 +361,9 @@ class AppTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool obscureText;
   final int maxLines;
+  final TextInputAction? textInputAction;
+  final Iterable<String>? autofillHints;
+  final ValueChanged<String>? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -345,6 +372,9 @@ class AppTextField extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText,
       maxLines: maxLines,
+      textInputAction: textInputAction,
+      autofillHints: autofillHints,
+      onSubmitted: onSubmitted,
       style: const TextStyle(color: AppColors.white),
       decoration: InputDecoration(
         labelText: label,

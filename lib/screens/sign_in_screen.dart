@@ -16,6 +16,7 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _passwordFocusNode = FocusNode();
   bool _isPasswordVisible = false;
   bool _loading = false;
 
@@ -23,6 +24,7 @@ class _SignInScreenState extends State<SignInScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -93,11 +95,17 @@ class _SignInScreenState extends State<SignInScreen> {
             label: 'Correo',
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            autofillHints: const [AutofillHints.email],
+            onSubmitted: (_) => _passwordFocusNode.requestFocus(),
           ),
           const SizedBox(height: 18),
           TextField(
             controller: _passwordController,
+            focusNode: _passwordFocusNode,
             obscureText: !_isPasswordVisible,
+            textInputAction: TextInputAction.done,
+            autofillHints: const [AutofillHints.password],
             style: const TextStyle(color: AppColors.white),
             decoration: InputDecoration(
               labelText: 'Contrasena',
