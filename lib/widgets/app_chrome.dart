@@ -131,69 +131,80 @@ class AuthShell extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.black,
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final keyboardBottom = MediaQuery.viewInsetsOf(context).bottom;
-            return Row(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.10,
-                  color: AppColors.limeGreen,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    padding: EdgeInsets.fromLTRB(
-                      28,
-                      28,
-                      28,
-                      keyboardBottom > 0 ? keyboardBottom + 28 : 28,
-                    ),
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: 480,
-                          minHeight: constraints.maxHeight - 56,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            const SizedBox(height: 24),
-                            const BrandLogo(fontSize: 34, centered: true),
-                            const SizedBox(height: 24),
-                            Text(
-                              title,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: AppColors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Row(
+            children: [
+              Container(
+                width: MediaQuery.sizeOf(context).width * 0.10,
+                color: AppColors.limeGreen,
+              ),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final keyboardOpen =
+                        MediaQuery.viewInsetsOf(context).bottom > 0;
+                    return SingleChildScrollView(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      physics: const ClampingScrollPhysics(),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 28,
+                        vertical: keyboardOpen ? 16 : 28,
+                      ),
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: 480,
+                            minHeight: keyboardOpen
+                                ? 0
+                                : (constraints.maxHeight - 56).clamp(
+                                    0,
+                                    double.infinity,
+                                  ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: keyboardOpen
+                                ? MainAxisAlignment.start
+                                : MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              SizedBox(height: keyboardOpen ? 8 : 24),
+                              const BrandLogo(fontSize: 34, centered: true),
+                              SizedBox(height: keyboardOpen ? 16 : 24),
+                              Text(
+                                title,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: AppColors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              subtitle,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: AppColors.textMuted,
-                                fontSize: 14,
+                              const SizedBox(height: 8),
+                              Text(
+                                subtitle,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: AppColors.textMuted,
+                                  fontSize: 14,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 28),
-                            child,
-                            const SizedBox(height: 24),
-                          ],
+                              SizedBox(height: keyboardOpen ? 18 : 28),
+                              child,
+                              const SizedBox(height: 24),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              ],
-            );
-          },
+              ),
+            ],
+          ),
         ),
       ),
     );

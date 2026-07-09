@@ -35,7 +35,7 @@ class BiceSmartIoTApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.black,
         useMaterial3: true,
       ),
-      initialRoute: AppRoutes.signIn,
+      home: const ProviderProfileScreen(),
       routes: {
         AppRoutes.signIn: (_) => const SignInScreen(),
         AppRoutes.signUp: (_) => const SignUpScreen(),
